@@ -5,11 +5,14 @@
 개요 TBU  
 
 ## Docker Build 순서  
-1. Pull (get docker image)  
-2. Container (image build)  
-3. Run (docker container)  
+도커 사용은 크게 다음의 과정으로 진행됨.  
+(1 **Pull**) Base가 될 도커 이미지를 가져오고, (2 **Prepare**) 폴더 경로와 텍스트 파일을 준비하고, (3 **Build**) 사용할 도커 이미지를 빌드한 뒤,  (4 **Run**) 컨테이너 실행.  
+1. Pull (get base docker image)  
+2. Prepare (folder and file)  
+3. Build (my image)
+4. Run (docker container)  
 
-### 1. Pull (get docker image)  
+### 1. Pull (get base docker image)  
 DockerHub 등에서 사용할 docker image를 찾고, 이미지 이름 문자열을 확보함.  
 (예를 들어 텐서플로우 공식 도커 이미지를 찾아보면, ```"tensorflow/tensorflow"``` 임을 알 수 있음)  
 
@@ -41,8 +44,9 @@ myid-yo@DESKTOP:~$
 혹은 저 이미지를 근간으로 시작하여 내가 만드는 용도의 이미지 환경을 추가하거나 이미지를 구워서 배포할 수 있음.  
   
 * 개인적인 docker hub repository에 올려둔 image가 있는 경우, 같은 방식으로 image pull 가능함. 명령어 : ~~sudo~~ ```docker pull myimage/test:latest```  
+* 개인 이미지 혹은 타인이 완성해 놓은 이미지를 이용하는 경우, 아래의 준비 및 빌드 과정이 필요 없으므로, Run 챕터로 스킵 가능.  
 
-### 2. Build (container)  
+### 2. Prepare (folder and file)  
 내 환경의 도커 이미지를 만들기 위해 사전 준비로 uid를 알아내고 컨테이너 생성용 스크립트를 작성한 뒤 docker build 명령어를 실행하게 됨.  
 
 **UID 알아내기**  
@@ -96,7 +100,79 @@ RUN apt install -y my_preferred_util
 RUN pip install my_favo_py_lib
 USER myid-yo
 ~~~
+vi에서 a(혹은 i)를 눌러 텍스트를 다 입력한 뒤에 (위에 설명했 듯) esc를 누르고 콜론(:)을 누른 뒤, 명령어 wq를 입력하고 enter를 누르면 파일이 생성 저장된 후 다시 쉘 프롬프트로 탈출하게 됨.  
 텍스트 파일 편집 및 저장을 마쳤으면 ```ls``` 혹은 ```cat``` 명령어로 제대로 되었는지 확인 가능.  
 
-### 3. Run 
+### 3. Build (my image)
+작성한 파일이 있는 폴더에서 아래 명령어를 입력하여 내가 사용할 이미지를 빌드함.  
+명령어 형식은 ``` docker build -t [이미지태그이름짓기] . -f [위에준비한텍스트파일]```과 같음.  
 
+예시::도커 빌드 명령어에 이미지 이름(태그, -t)를 "myid-yo/test"로 지어주고, 현재 경로를 작업 경로로(.), 빌드 내용 파일(-f)은 위에서 작성한 "dockerfile"로 실행.  
+```
+docker build -t myid-yo/test . -f dockerfile
+```
+예시::Build진행 입출력 화면
+```
+myid-yo@DESKTOP:~/docker$ docker build -t myid-yo/test . -f dockerfile
+
+[+] Building 28.9s (5/9)
+ => [internal] load build definition from dockerfile                                                               0.0s
+ => => transferring dockerfile: 253B                                                                               0.0s
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [internal] load metadata for docker.io/tensorflow/tensorflow:latest                                            0.0s
+ => [1/6] FROM docker.io/tensorflow/tensorflow                                                                     0.4s
+ => [2/6] RUN apt update                                                                                          21.6s
+ => => # Get:3 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 vim-common all 2:8.1.2269-1ubuntu5.8 [85.2 kB]
+ => => # Get:4 ...(중간생략)...
+ => [6/6] RUN adduser myid-yo sudo                                                                                   0.6s
+ => exporting to image                                                                                             0.4s
+ => => exporting layers                                                                                            0.4s
+ => => writing image sha256:8e9f2f7370a0083ce7e91604ced91d704831115c81a09b3b261c60801c6a68d8                       0.0s
+ => => naming to docker.io/myid-yo/test                                                                            0.0s
+
+myid-yo@DESKTOP:~/docker$
+```
+에러가 없다면 위와 같이 완결되어 새로운 도커 이미지 파일이 생성됨.  
+* 사용할 이미지가 잘 빌드된 것을 확인한 뒤에는 base 용도로 처음에 받았던 이미지를 삭제할 수 있음.  
+  * 삭제 명령어 예시 : ```docker rmi tensorflow/tensorflow```
+
+### 4. Run (docker container)  
+이미지를 지정하여 도커를 실행하면 컨테이너가 생성되어 그 환경 내부 쉘로 들어가게 됨.  
+
+실제 시스템 상 스토리지에 있는 어느 경로를 컨테이너 안에서도 특정 경로로 연결 접근하기 위해 "-v" 옵션을 지정할 수 있음.  
+"-v" 옵션은 여러번 반복하여 외부(실제 시스템)의 여러 다른 폴더를 컨테이너 환경 내부의 여러 다른 경로로 사용 가능함.  
+
+도커 실행 명령어 형식은 ```docker run -ti --gpus all --name=[컨테이너이름짓기] -v [밖경로:안경로] -p [밖포트:안포트] [도커이미지이름]```  
+예시::docker run 명령에 기본옵션을 주고, 지금 실행되는 생성 컨테이너 이름을 "my_test_c"로 짓고, 실제 시스템 상 "/mnt/c/user" 폴더를 도커 안에서도 접근 가능한 내부 경로 "/workspace"로 연결하며, 포트는 내외부 8080 그대로, 실행될 도커 이미지는 위에서 만든 "myid-yo/test" 태그 이름을 지정함.  
+```
+docker run -ti --gpus all --name=my_test_c -v /mnt/c/user:/workspace -p 8080:8080 myid-yo/test
+```
+에러가 없다면 도커 컨테이너가 실행되고, 그 환경 안쪽 쉘(bash 등) 프롬프트인 cli가 펼쳐지게 됨.  
+
+이후, 원하는 작업을 진행하면 됨.  
+
+### 그밖에...  
+#### [비밀번호 설정]
+당연히 보안을 위하여 처음에 아이디 비밀번호를 잘 설정하고 시작해야 함.  
+
+비밀번호 설정 작업을 위해 ```docker start [컨테이너이름]``` 실행 후 ```docker exec -u 0 -ti [컨테이너이름] bash``` 라는 명령어로 0번째(uid) 아이디인 root로 로그인 한 뒤 아래 명령어들로 비번 설정을 진행.  
+예시::작업 진행 입출력 화면
+```
+myid-yo@DESKTOP:~$ docker start my_test_c
+
+myid-yo@DESKTOP:~$ docker exec -u 0 -ti my_test_c bash
+
+root@8d44c1b:/# passwd myid-yo
+
+Enter new UNIX password: **********
+Retype new UNIX password: **********
+passwd: password updated successfully
+
+root@8d44c1b:/# exit
+```
+
+#### [attach와 exec의 차이]
+TBU
+#### [종료, 소거, 삭제 ...]
+TBU
