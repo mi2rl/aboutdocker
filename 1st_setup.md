@@ -4,13 +4,31 @@
 ## 개요  
 개요 TBU  
 
-## Docker Build 순서  
+## 요약  
+* **sudo 쓰지 않도록** 설정하자. (연구실 네트워크 구성 상, LDAP 상에 도커그룹을 설정하여 sudo 권한없어도 되도록 해두었음.)
+* **pull -> prepare -> build -> run**
+  * pull : (이하, 예시 명령어) ```docker pull tensorflow/tensorflow```
+  * prepare : id 명령어로 uid 번호를 알아내고, 홈폴더 (~) 아래 docker 폴더 만들어서 텍스트파일 "dockerfile"을 작성함.
+    *  ```FROM tensorflow/tensorflow \ RUN export HTTP_PROXY=http://192.168....:3128 \ ... \ RUN apt update \ RUN apt install –y sudo vim \ RUN addgroup ... \ RUN adduser ... \ USER myid-yo```
+  * build : ```docker build -t myid-yo/test . -f dockerfile```
+  * run : ```docker run -ti --gpus all --name=my_test_c -v /mnt/nas100/myid_yo:/workspace -p 8080:8080 myid-yo/test```
+* **비번 변경** :  
+  * ```docker start my_test_c``` 실행 후 ```docker exec -u 0 -ti my_test_c bash``` 실행 (root 접속됨).  
+  * ```passwd myid-yo``` 실행하여 비밀번호 새로 잘 설정한 뒤 사용할 것. (설정 마친 후 잊지말고 exit 실행)  
+* 그밖에...  
+  * 실행 : ```docker exec``` 명령 vs. ```docker attach``` 명령
+  * 종료 : ```docker stop```
+  * 삭제 : 컨테이너 삭제는 ```docker rm [컨테이너]```. 이미지 삭제는 ```docker rmi [이미지태그]```
+
+## Docker Build & Run 순서  
 도커 사용은 크게 다음의 과정으로 진행됨.  
-(1 **Pull**) Base가 될 도커 이미지를 가져오고, (2 **Prepare**) 폴더 경로와 텍스트 파일을 준비하고, (3 **Build**) 사용할 도커 이미지를 빌드한 뒤,  (4 **Run**) 컨테이너 실행.  
-1. Pull (get base docker image)  
-2. Prepare (folder and file)  
-3. Build (my image)
-4. Run (docker container)  
+
+|도커 빌드 및 사용 대략적인 과정|------------------------------------------------|
+|---|---|
+|1. **Pull** (get base docker image) |Base가 될 도커 이미지를 가져옴|  
+|2. **Prepare** (folder and file)    |폴더 경로와 텍스트 파일을 준비함|  
+|3. **Build** (my image)             |사용할 도커 이미지를 빌드함|  
+|4. **Run** (docker container)       |컨테이너를 실행하여 들어감|  
 
 ### 1. Pull (get base docker image)  
 DockerHub 등에서 사용할 docker image를 찾고, 이미지 이름 문자열을 확보함.  
@@ -174,5 +192,6 @@ root@8d44c1b:/# exit
 
 #### [attach와 exec의 차이]
 TBU
+
 #### [종료, 소거, 삭제 ...]
 TBU
