@@ -70,4 +70,19 @@ myid-yo@DESKTOP-D009:~$ _
 ```
 sudo apt-get remove docker docker-engine docker.io containerd runc
 ```
+
+### Docker 설치
+Ubuntu 등 리눅스에서는 cli에서 여러 명령어를 입력하여 설치를 진행. (시기와 버젼업 상황에 따라 다르니 웹검색)  
+
+MS-Windows 에서는 (윈10 이후 WSL 탑재 가정) 윈도우용 Docker 인스톨러로 설치하는 것을 권장함.  
+검색을 통하여 MS 공식 사이트 (docs.microsoft.com) 내 docker 안내 및 공식 사이트 (docs.docker.com)에서 다운로드 가능.  
+설치에서 wsl 계층에 설치 사용이 가능하고, 설치하고 나면 cli는 물론 gui에서 설정 가능한 도커앱을 사용할 수 있음.  
+[그림] MS윈도우즈용 공식 도커앱 인스톨러 설치 완료 화면
 ![image](https://user-images.githubusercontent.com/49431924/190540258-06d0f89c-fb11-40f9-aae2-c6a6bec18eb6.png)
+
+도커 설치를 완료한 뒤, 제대로 설치 되었는지 확인은 아래와 같음. 
+```
+입력
+출력
+```
+.
