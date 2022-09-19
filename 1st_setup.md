@@ -24,12 +24,12 @@ TBU
 
 ## Docker Build & Run 순서  
 도커 사용은 크게 다음의 과정으로 진행됨.  
-|순서 |--설명----------------------------------------------|
-|---|---|
-|1. **Pull** (get base docker image) |Base가 될 도커 이미지를 가져옴|  
-|2. **Prepare** (folder and file)    |폴더 경로와 텍스트 파일을 준비함|  
-|3. **Build** (my image)             |사용할 도커 이미지를 빌드함|  
-|4. **Run** (docker container)       |컨테이너를 실행하여 들어감|  
+|순서 |--설명--------------|--명령어 예시------------------------------|
+|---|---|---|
+|1. **Pull**    |Base가 될 도커 이미지를 가져옴 |```docker pull tensorflow/tensorflow```|  
+|2. **Prepare** |폴더 경로와 텍스트 파일을 준비함|```id``` / ```mkdir docker``` / ```cd docker``` / ```vi dockerfile```|  
+|3. **Build**   |사용할 도커 이미지를 빌드함    |```docker build -t myid-yo/test . -f dockerfile```|  
+|4. **Run**     |컨테이너를 실행하여 들어감     |```docker run -ti --gpus all --name=... -v ... -p ... myid-yo/test```|  
 
 ### 1. Pull (get base docker image)  
 DockerHub 등에서 사용할 docker image를 찾고, 이미지 이름 문자열을 알아 둠.  
@@ -38,9 +38,9 @@ DockerHub 등에서 사용할 docker image를 찾고, 이미지 이름 문자열
 이미지를 다운로드하는 명령어 형식은 ~~sudo~~ ```docker pull "docker image name"```과 같음.  
 (예로 위 텐서플로우의 경우 실제 명령어는 ```docker pull tensorflow/tensorflow```가 됨. 이 경우 도커 이미지 이름에 공백문자가 없으므로 따옴표를 생략할 수 있음.)  
 
-**_ * sudo에 관하여: 예전에 개인적 사용 시 sudo 명령어를 많이 사용했으나, 연구실 보안 환경에서는 되도록 sudo 사용을 자제해야 하므로, sudo 없이 도커를 사용할 수 있는 설정을 잘 진행해야 함._**  
+* _**sudo에 관하여: 예전에 개인적 사용 시 sudo 명령어를 많이 사용했으나, 연구실 보안 환경에서는 되도록 sudo 사용을 자제해야 하므로, sudo 없이 도커를 사용할 수 있는 설정을 잘 진행해야 함.**_  
 
-예시(입력 명령어):: 텐서플로우 도커 pull 명령 실행. (예시와 같이 정확한 버젼까지 지정할 수도 있음. "tensorflow/tensorflow만 입력하면 알아서 버젼을 pull함)  
+예시(입력 명령어):: 텐서플로우 도커 pull 명령 실행. (예시와 같이 정확한 버젼까지 지정할 수도 있음. "tensorflow/tensorflow"만 입력하면 알아서 버젼을 pull함)  
 ```
 docker pull "tenserflow/tensorflow:1.15.0-gpu-py3"
 ```
