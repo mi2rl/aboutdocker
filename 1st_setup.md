@@ -40,11 +40,11 @@ DockerHub 등에서 사용할 docker image를 찾고, 이미지 이름 문자열
 
 * _**sudo에 관하여: 예전에 개인적 사용 시 sudo 명령어를 많이 사용했으나, 연구실 보안 환경에서는 되도록 sudo 사용을 자제해야 하므로, sudo 없이 도커를 사용할 수 있는 설정을 잘 진행해야 함.**_  
 
-예시(입력 명령어):: 텐서플로우 도커 pull 명령 실행. (예시와 같이 정확한 버젼까지 지정할 수도 있음. "tensorflow/tensorflow"만 입력하면 알아서 버젼을 pull함)  
+**예시(입력 명령어)**:: 텐서플로우 도커 pull 명령 실행. (예시와 같이 정확한 버젼까지 지정할 수도 있고, 생략하여 "tensorflow/tensorflow"만 입력해도 알아서 버젼을 pull함)  
 ```
 docker pull "tenserflow/tensorflow:1.15.0-gpu-py3"
 ```
-입출력 예시 화면::  
+**예시**:: pull시 입출력 예시 화면  
 ```
 myid-yo@DESKTOP:~$ docker pull tensorflow/tensorflow
 
@@ -178,7 +178,7 @@ docker run -ti --gpus all --name=my_test_c -v /mnt/c/user:/workspace -p 8080:808
 당연히 보안을 위하여 처음에 아이디 비밀번호를 잘 설정하고 시작해야 함.  
 
 비밀번호 설정 작업을 위해 ```docker start [컨테이너이름]``` 실행 후 ```docker exec -u 0 -ti [컨테이너이름] bash``` 라는 명령어로 로그인 한 뒤 ("-u 0"로 영번째 uid인 root로 접속하게 됨) 아래 명령어들로 비번 설정을 진행.  
-**예시**:: 작업 진행 입출력 화면
+**예시**:: pw작업 진행 입출력 화면
 ```
 myid-yo@DESKTOP:~$ docker start my_test_c
 
