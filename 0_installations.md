@@ -1,8 +1,82 @@
 ## 기본 설치  
 내용을 다루기 전에 기초적으로 설치해야 할 것들.  
 
+### nVidia 드라이버와 Cuda 설치
+GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지를 진행하는 방식을 추천함.  
+
+#### # NVIDIA Graphic Driver install \#  
+* repository 추가  
+```add-apt-repository ppa:graphics-drivers/ppa```  
+
+* 우분투 드라이버 패키지  
+```apt install ubuntu-drivers-common```  
+
+* repository에 대한 설정  
+```release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")```  
+```apt install sudo gnupg```  
+```apt-key adv --fetch-keys "http://developer.download.nvidia.com/compute/cuda/repos/"$release"/x86_64/7fa2af80.pub"```  
+```sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-cuda.list'```  
+```sh -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-machine-learning.list'```  
+```apt update```  
+
+* 우분투 드라이버 오토 인스톨  
+```ubuntu-drivers autoinstall```  
+```reboot```  
+
+#### # CUDA Install \#  
+* driver 설치  
+```apt-get install cuda-11-0```  
+```apt-get install libcudnn7-dev```  
+
+* cuda version 확인  
+```cat /usr/local/cuda/version.txt```  
+
+* cudnn 확인  
+```cat /usr/include/cudnn.h | grep -E "CUDNN_MAJOR|CUDNN_MINOR|CUDNN_PATCHLEVEL"```  
+
+#### # DOCKER 설치 \#
+* docker-ce 설치  
+```apt-get install apt-transport-https ca-certificates curl software-properties-common```  
+```curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -```  
+```add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"```  
+```apt-get update && apt-cache search docker-ce```  
+```apt-get install docker-ce```  
+
+* nvidia-docker 설치 (ubuntu 20.04 까지 해당)  
+```curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -```  
+```distribution=$(. /etc/os-release;echo $ID$VERSION_ID)```  
+```curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list```  
+
+* ubuntu 22.04 부터 (apt-key는 사용안함. keyring사용)
+```
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+         && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+         && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+               sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+               sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+apt-get update
+apt-get install -y nvidia-container-toolkit
+systemctl restart docker
+```
+
+* docker install test
+```docker run --gpus all nvidia/cuda:9.0-base nvidia-smi```
+
+#### # GPUSTAT 설치 \#
+```apt-get install python-pip```  
+```pip install gpustat```  
+
+* 18.04 이후  
+```apt install gpustat```  
+
+* ssh auto login 설정 (gpumon -> 해당서버)  
+```ssh-copy-id -i ~/.ssh/id_rsa.pub node8.mi2rl.co```  
+```servers.txt``` 에 IP 추가 작업 진행. 
+
+
 ### WSL (WSL2)  
-리눅스 계열 OS를 사용하고 있다면 WSL을 설치할 필요가 없이, 해당 OS의 패키지 설치 매니져(apt, yum 등등)를 통해 여타 설치 작업을 진행함.  
+리눅스 계열 OS를 사용하고 있다면 WSL을 설치할 필요가 없이, 해당 OS의 패키지 설치 매니져(apt, yum 등등)를 통해 
+여타 설치작업 진행이 가능하나,  
 MS윈도우즈를 사용하고 있다면 (Win10 이상 가정) WSL 기능으로 리눅스 서브시스템을 설치한 뒤 리눅스 프롬프트에서 진행하게 됨.  
 아래 내용은 Win10 파워쉘(powershell)을 관리자모드로 실행한 창에서 진행된 내용의 캡쳐임 (명령어 및 화면 출력 모두 포함).  
 입력 (wsl 명령어에 --install 옵션커맨드로 Ubuntu 배포판을 설치함)
@@ -72,9 +146,9 @@ sudo apt-get remove docker docker-engine docker.io containerd runc
 ```
 
 ### Docker 설치
-Ubuntu 등 리눅스에서는 cli에서 여러 명령어를 입력하여 설치를 진행. (시기와 버젼업 상황에 따라 다르니 웹검색)  
+Ubuntu 등 본디의 리눅스에서는 cli에서 여러 명령어를 입력하여 설치를 진행. (시기와 버젼업 상황에 따라 다르니 웹검색)  
 
-MS-Windows 에서는 (윈10 이후 WSL 탑재 가정) 윈도우용 Docker 인스톨러로 설치하는 것을 권장함.  
+MS-Windows 상 WSL에서는 (윈10 이후 WSL2 탑재 가정) 윈도우용 Docker 인스톨러로 설치하는 것을 권장함.  
 검색을 통하여 MS 공식 사이트 (docs.microsoft.com) 내 docker 안내 및 공식 사이트 (docs.docker.com)에서 다운로드 가능.  
 설치에서 wsl 계층에 설치 사용이 가능하고, 설치하고 나면 cli는 물론 gui에서 설정 가능한 도커앱을 사용할 수 있음.  
 [그림] MS윈도우즈용 공식 도커앱 인스톨러 설치 완료 화면
