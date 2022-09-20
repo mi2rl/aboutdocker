@@ -1,10 +1,10 @@
-## 기본 설치  
+# 기본 설치  
 내용을 다루기 전에 기초적으로 설치해야 할 것들.  
 
-### nVidia 드라이버와 Cuda 설치
+## nVidia 드라이버와 Cuda 설치
 GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지를 진행하는 방식을 추천함.  
 
-#### # NVIDIA Graphic Driver install \#  
+### # NVIDIA Graphic Driver install \#  
 * repository 추가  
 ```add-apt-repository ppa:graphics-drivers/ppa```  
 
@@ -23,7 +23,7 @@ GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지�
 ```ubuntu-drivers autoinstall```  
 ```reboot```  
 
-#### # CUDA Install \#  
+### # CUDA Install \#  
 * driver 설치  
 ```apt-get install cuda-11-0```  
 ```apt-get install libcudnn7-dev```  
@@ -34,7 +34,7 @@ GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지�
 * cudnn 확인  
 ```cat /usr/include/cudnn.h | grep -E "CUDNN_MAJOR|CUDNN_MINOR|CUDNN_PATCHLEVEL"```  
 
-#### # DOCKER 설치 \#
+### # DOCKER 설치 \#
 * docker-ce 설치  
 ```apt-get install apt-transport-https ca-certificates curl software-properties-common```  
 ```curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -```  
@@ -62,7 +62,7 @@ systemctl restart docker
 * docker install test
 ```docker run --gpus all nvidia/cuda:9.0-base nvidia-smi```
 
-#### # GPUSTAT 설치 \#
+### # GPUSTAT 설치 \#
 ```apt-get install python-pip```  
 ```pip install gpustat```  
 
@@ -74,7 +74,7 @@ systemctl restart docker
 ```servers.txt``` 에 IP 추가 작업 진행. 
 
 
-### WSL (WSL2)  
+## WSL (WSL2)  
 리눅스 계열 OS를 사용하고 있다면 WSL을 설치할 필요가 없이, 해당 OS의 패키지 설치 매니져(apt, yum 등등)를 통해 
 여타 설치작업 진행이 가능하나,  
 MS윈도우즈를 사용하고 있다면 (Win10 이상 가정) WSL 기능으로 리눅스 서브시스템을 설치한 뒤 리눅스 프롬프트에서 진행하게 됨.  
@@ -157,6 +157,7 @@ MS-Windows 상 WSL에서는 (윈10 이후 WSL2 탑재 가정) 윈도우용 Docke
 도커 설치를 완료한 뒤, 제대로 설치 되었는지 확인은 아래와 같음. 
 ```
 입력
+(TBU)
 출력
 ```
 .
