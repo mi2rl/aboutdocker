@@ -12,20 +12,28 @@ GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지�
 ```apt install ubuntu-drivers-common```  
 
 * repository에 대한 설정  
+(복사 붙여넣기 한다면, 1행 완성 입력에 오류가 없도록 주의할 것. eg. 마우스 트리플 클릭으로 1행 전체+enter를 선택 복사 가능.)  
 ```release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")```  
+
 ```apt install sudo gnupg```  
+
 ```apt-key adv --fetch-keys "http://developer.download.nvidia.com/compute/cuda/repos/"$release"/x86_64/7fa2af80.pub"```  
+
 ```sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-cuda.list'```  
+
 ```sh -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/'$release'/x86_64 /" > /etc/apt/sources.list.d/nvidia-machine-learning.list'```  
+
 ```apt update```  
 
 * 우분투 드라이버 오토 인스톨  
 ```ubuntu-drivers autoinstall```  
+
 ```reboot```  
 
 ### # CUDA Install \#  
 * driver 설치  
 ```apt-get install cuda-11-0```  
+
 ```apt-get install libcudnn7-dev```  
 
 * cuda version 확인  
@@ -37,14 +45,20 @@ GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지�
 ### # DOCKER 설치 \#
 * docker-ce 설치  
 ```apt-get install apt-transport-https ca-certificates curl software-properties-common```  
+
 ```curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -```  
+
 ```add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"```  
+
 ```apt-get update && apt-cache search docker-ce```  
+
 ```apt-get install docker-ce```  
 
 * nvidia-docker 설치 (ubuntu 20.04 까지 해당)  
 ```curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -```  
+
 ```distribution=$(. /etc/os-release;echo $ID$VERSION_ID)```  
+
 ```curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list```  
 
 * ubuntu 22.04 부터 (apt-key는 사용안함. keyring사용)
@@ -59,11 +73,12 @@ apt-get install -y nvidia-container-toolkit
 systemctl restart docker
 ```
 
-* docker install test
+* docker install test  
 ```docker run --gpus all nvidia/cuda:9.0-base nvidia-smi```
 
 ### # GPUSTAT 설치 \#
 ```apt-get install python-pip```  
+
 ```pip install gpustat```  
 
 * 18.04 이후  
@@ -71,6 +86,7 @@ systemctl restart docker
 
 * ssh auto login 설정 (gpumon -> 해당서버)  
 ```ssh-copy-id -i ~/.ssh/id_rsa.pub node8.mi2rl.co```  
+
 ```servers.txt``` 에 IP 추가 작업 진행. 
 
 
