@@ -14,7 +14,7 @@ GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지�
 ```apt install ubuntu-drivers-common```  
 
 * repository에 대한 설정  
-(복사 붙여넣기 한다면, 1행 완성 입력에 오류가 없도록 주의할 것. eg. 마우스 트리플 클릭으로 1행 전체+enter를 선택 복사 가능.)  
+_복사 붙여넣기 한다면, 1행 완성 입력에 오류가 없도록 주의할 것. (마우스 트리플 클릭으로 1행 범위 선택 확인 가능. 주의: 트리플클릭 후 복사하면 줄 끝 enter까지 포함 입력됨.)_  
 
 ```release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")```  
 
