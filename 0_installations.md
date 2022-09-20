@@ -6,13 +6,16 @@ GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지�
 
 ### # NVIDIA Graphic Driver install \#  
 * repository 추가  
+
 ```add-apt-repository ppa:graphics-drivers/ppa```  
 
 * 우분투 드라이버 패키지  
+
 ```apt install ubuntu-drivers-common```  
 
 * repository에 대한 설정  
 (복사 붙여넣기 한다면, 1행 완성 입력에 오류가 없도록 주의할 것. eg. 마우스 트리플 클릭으로 1행 전체+enter를 선택 복사 가능.)  
+
 ```release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")```  
 
 ```apt install sudo gnupg```  
@@ -26,24 +29,29 @@ GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지�
 ```apt update```  
 
 * 우분투 드라이버 오토 인스톨  
+
 ```ubuntu-drivers autoinstall```  
 
 ```reboot```  
 
 ### # CUDA Install \#  
 * driver 설치  
+
 ```apt-get install cuda-11-0```  
 
 ```apt-get install libcudnn7-dev```  
 
 * cuda version 확인  
+
 ```cat /usr/local/cuda/version.txt```  
 
 * cudnn 확인  
+
 ```cat /usr/include/cudnn.h | grep -E "CUDNN_MAJOR|CUDNN_MINOR|CUDNN_PATCHLEVEL"```  
 
 ### # DOCKER 설치 \#
 * docker-ce 설치  
+
 ```apt-get install apt-transport-https ca-certificates curl software-properties-common```  
 
 ```curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -```  
@@ -55,6 +63,7 @@ GPU 드라이버와 CUDA의 경우 Docker 이전에 설치해 놓고 나머지�
 ```apt-get install docker-ce```  
 
 * nvidia-docker 설치 (ubuntu 20.04 까지 해당)  
+
 ```curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -```  
 
 ```distribution=$(. /etc/os-release;echo $ID$VERSION_ID)```  
@@ -74,6 +83,7 @@ systemctl restart docker
 ```
 
 * docker install test  
+
 ```docker run --gpus all nvidia/cuda:9.0-base nvidia-smi```
 
 ### # GPUSTAT 설치 \#
@@ -82,9 +92,11 @@ systemctl restart docker
 ```pip install gpustat```  
 
 * 18.04 이후  
+
 ```apt install gpustat```  
 
 * ssh auto login 설정 (gpumon -> 해당서버)  
+
 ```ssh-copy-id -i ~/.ssh/id_rsa.pub node8.mi2rl.co```  
 
 ```servers.txt``` 에 IP 추가 작업 진행. 
