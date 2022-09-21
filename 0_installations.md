@@ -62,17 +62,20 @@ _복사 붙여넣기 한다면, 1행 완성 입력에 오류가 없도록 주의
 
 ```curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list```  
 
-* ubuntu 22.04 이후 (apt-key는 사용안함. keyring사용)
+* ubuntu 22.04 이후 (apt-key 사용안함. keyring사용)
 ```
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \ 
-    && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
-    && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) && \ 
+    curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | \ 
+    sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg && \
+    curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
     sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
     sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 apt-get update
 apt-get install -y nvidia-container-toolkit
 systemctl restart docker
 ```
+참고로, 위 명령어들 중 첫 항목의 구성은 distribution=로 시작하여 curl, gpg, sed, tee 등으로 5행 이상 길게 이어져 있으며,  
+터미널 cli의 80컬럼 구성에 맞춰 강제 개행하는 (행끝에 \ 표기) 표기 그대로 복사하여 붙여 넣어도 잘 동작할 것임. (백슬래쉬 \ 개행 없이 한줄에 다 입력해도 됨.)  
 
 * docker install test  
 
