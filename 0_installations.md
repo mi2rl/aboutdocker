@@ -19,7 +19,7 @@ _복사 붙여넣기 한다면, 1행 완성 입력에 오류가 없도록 주의
 
 ```release="ubuntu"$(lsb_release -sr | sed -e "s/\.//g")```  
 
-```apt install sudo gnupg```  
+```apt install gnupg```  (LTS 22.04 미만에서 키 설정을 위해 필수)
 
 ```apt-key adv --fetch-keys "http://developer.download.nvidia.com/compute/cuda/repos/"$release"/x86_64/7fa2af80.pub"```  
 
@@ -33,25 +33,16 @@ _복사 붙여넣기 한다면, 1행 완성 입력에 오류가 없도록 주의
 
 ```ubuntu-drivers autoinstall```  
 
-```reboot```  
+```reboot```  (22.04 이후 리붓 필요없음)  
+
+드라이버 설치 완료 후에 정상 확인을 위해 ```nvidia-smi``` 명령 결과 화면을 확인할 것.  
 
 ### # CUDA Install \#  
-* driver 설치  
-
-```apt-get install cuda-11-0```  
-
-```apt-get install libcudnn7-dev```  
-
-* cuda version 확인  
-
-```cat /usr/local/cuda/version.txt```  
-
-* cudnn 확인  
-
-```cat /usr/include/cudnn.h | grep -E "CUDNN_MAJOR|CUDNN_MINOR|CUDNN_PATCHLEVEL"```  
+* 과거에는 쿠다 별도 설치가 필요했으나, 지금은 nvidia driver에 통합 설치됨.  
+* 상황을 인지하고, ```nvidia-smi``` 명령어로 cuda 버젼만 확인하고 넘어가도 됨.  
 
 ### # DOCKER 설치 \#
-* docker-ce 설치  
+* docker-ce 설치  (ce = Community Edition)
 
 ```apt-get install apt-transport-https ca-certificates curl software-properties-common```  
 
@@ -63,7 +54,7 @@ _복사 붙여넣기 한다면, 1행 완성 입력에 오류가 없도록 주의
 
 ```apt-get install docker-ce```  
 
-* nvidia-docker 설치 (ubuntu 20.04 까지 해당)  
+* nvidia-docker 설치 (ubuntu 20.04 이전 까지 해당)  
 
 ```curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -```  
 
@@ -71,13 +62,13 @@ _복사 붙여넣기 한다면, 1행 완성 입력에 오류가 없도록 주의
 
 ```curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list```  
 
-* ubuntu 22.04 부터 (apt-key는 사용안함. keyring사용)
+* ubuntu 22.04 이후 (apt-key는 사용안함. keyring사용)
 ```
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
-         && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
-         && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
-               sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
-               sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \ 
+    && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+    && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+    sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+    sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 apt-get update
 apt-get install -y nvidia-container-toolkit
 systemctl restart docker
@@ -88,19 +79,9 @@ systemctl restart docker
 ```docker run --gpus all nvidia/cuda:9.0-base nvidia-smi```
 
 ### # GPUSTAT 설치 \#
-```apt-get install python-pip```  
-
-```pip install gpustat```  
-
-* 18.04 이후  
+* nvidia-smi 내용을 간추려 볼 수 있는 유틸로써 설치해두면 좋음. (참고로 우분투 18.04 이전 버젼은 설치 명령어가 다르므로 별도 검색하여 진행)  
 
 ```apt install gpustat```  
-
-* ssh auto login 설정 (gpumon -> 해당서버)  
-
-```ssh-copy-id -i ~/.ssh/id_rsa.pub node8.mi2rl.co```  
-
-```servers.txt``` 에 IP 추가 작업 진행. 
 
 ---------------------------------
 ## WSL (WSL2)  
